@@ -1,0 +1,14 @@
+{
+  "auto_responses": {
+    "6318716504": []
+  },
+  "reminders": [
+    {
+      "user_id": 6318716504,
+      "message": "Take a break",
+      "datetime": "2025-06-19T03:13:11.232064",
+      "recurring": null,
+      "chat_id": 6318716504
+    }
+  ]
+}
