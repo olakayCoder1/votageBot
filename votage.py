@@ -146,7 +146,7 @@ They'll get your access ready right away.
 
 Once you've messaged the team, come back here and click the link below to complete your registration here 👇
 
-👉 [Registration Link](https://your-registration-link.com)
+👉 [Registration Link](https://votage-page.vercel.app)
 
 This helps us understand your trading experience and lock in your trial access.
 
@@ -177,7 +177,7 @@ Now you're ready!! ✅
 Let's lock this in:
 Click the link below to enroll for your trial + webinar access:
 
-👉 [Enrollment Link](https://your-enrollment-link.com)
+👉 [Enrollment Link](https://votage-page.vercel.app)
 
 Seats are filling up fast — only a few left!
 
@@ -192,7 +192,7 @@ You can also reach me directly here:
         """
         
         keyboard4 = [
-            [InlineKeyboardButton("📝 Enrollment Link", url="https://your-enrollment-link.com")],
+            [InlineKeyboardButton("📝 Enrollment Link", url="https://votage-page.vercel.app")],
             [InlineKeyboardButton("📩 Contact Support", url="https://t.me/bullpilotofficial")],
             [InlineKeyboardButton("💬 Direct Contact", url="https://t.me/blisswrld10")]
         ]
