@@ -97,8 +97,7 @@ class AutoResponderBot:
         except Exception as e:
             logger.error(f"Error saving data: {e}")
 
-
-    async def start_command_old(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+    async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /start command with new welcome flow"""
         user_name = update.effective_user.first_name or "Friend"
         
@@ -206,139 +205,50 @@ You can also reach me directly here:
             reply_markup=reply_markup4
         )
 
+    # Admin commands for managing the bot (keeping original functionality)
+    async def admin_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Handle /admin command - shows original bot features"""
+        if not self._is_admin(update.effective_user.id):
+            await update.message.reply_text("You don't have permission to use admin commands.")
+            return
+            
+        admin_text = """
+🤖 *Admin Panel - AutoResponder & Reminder Bot*
 
+*Available Commands:*
 
-    async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Handle /start command with new welcome flow"""
-        user_name = update.effective_user.first_name or "Friend"
-        
-        # First welcome message
-        welcome_text = f"""
-    🎉 Congratulations {user_name}!
+📝 *Auto-Response Commands:*
+• `/addresponse <trigger> | <response>` - Add auto-response
+• `/listresponses` - View your auto-responses
+• `/deleteresponse <number>` - Delete auto-response
+• `/toggleresponse <number>` - Enable/disable auto-response
 
-    One of our users just made 35% profit in a single week using Pilot AI.
+⏰ *Reminder Commands:*
+• `/remind <time> <message>` - Set a reminder
+• `/reminders` - View your reminders
+• `/deletereminder <number>` - Delete reminder
 
-    Now it's your turn to see what this powerful bot can do.
+📖 *Examples:*
+• `/addresponse hello | Hi there! How can I help you?`
+• `/remind 2s Take a break`
+• `/remind 5m Check emails`
+• `/remind tomorrow 9am Meeting with client`
+• `/remind 2024-12-25 10:30 Christmas celebration`
+
+💡 *Tips:*
+- Auto-responses work with keywords (partial matches)
+- Use exact match with `/addresponse_exact`
+- Time formats: 10s, 5m, 2h, 3d, tomorrow, specific dates
         """
         
         keyboard = [
-            [InlineKeyboardButton("📩 Contact Support", url="https://t.me/bullpilotofficial")]
+            [InlineKeyboardButton("📝 Manage Responses", callback_data="manage_responses")],
+            [InlineKeyboardButton("⏰ Manage Reminders", callback_data="manage_reminders")],
+            [InlineKeyboardButton("❓ Help", callback_data="help")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         
-        await update.message.reply_text(welcome_text, reply_markup=reply_markup)
-        
-        # Wait a moment and send second message
-        await asyncio.sleep(1)
-        
-        second_message = f"""
-    👉 SEND a MESSAGE to our team now: 👉 @bullpilotofficial 
-
-    Just type: "Activate Bot Trial"
-    They'll get your access ready right away.
-        """
-        
-        keyboard2 = [
-            [InlineKeyboardButton("📩 Contact Support", url="https://t.me/bullpilotofficial")]
-        ]
-        reply_markup2 = InlineKeyboardMarkup(keyboard2)
-        
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=second_message,
-            reply_markup=reply_markup2
-        )
-        
-        # Wait another moment and send third message
-        await asyncio.sleep(1)
-        
-        third_message = f"""
-    ✅ Final Step:
-
-    Once you've messaged the team, come back here and click the link below to complete your registration here 👇
-
-    👉 [Registration Link](https://votage-page.vercel.app)
-
-    This helps us understand your trading experience and lock in your trial access.
-
-    You can also request a Zoom call or physical office meeting through the form.
-
-    ⚠️ Do this now, {user_name} - slots are almost gone!
-        """
-        
-        keyboard3 = [
-            [InlineKeyboardButton("📩 Contact Support", url="https://t.me/bullpilotofficial")]
-        ]
-        reply_markup3 = InlineKeyboardMarkup(keyboard3)
-        
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=third_message,
-            parse_mode='Markdown',
-            reply_markup=reply_markup3
-        )
-        
-        # NEW PROMOTIONAL MESSAGE - Add this here
-        await asyncio.sleep(3)
-        
-        promo_message = """
-    🎯 Free Bot Trial (No payment needed)
-    ✅ Step 1: Register here → https://tinyurl.com/bullpilot
-    ✅ Step 2: Fund $200 minimum  
-    ✅ Step 3: Send "TRIAL" to activate your trial
-    This activates the bot to trade for you. You earn passively 💰
-        """
-        
-        keyboard_promo = [
-            [InlineKeyboardButton("🚀 Register Now", url="https://tinyurl.com/bullpilot")],
-            [InlineKeyboardButton("📩 Contact Support", url="https://t.me/bullpilotofficial")]
-        ]
-        reply_markup_promo = InlineKeyboardMarkup(keyboard_promo)
-        
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=promo_message,
-            reply_markup=reply_markup_promo
-        )
-        
-        # Wait and send final message
-        await asyncio.sleep(2)
-        
-        final_message = f"""
-    Great job, {user_name}! 
-    Now you're ready!! ✅
-
-    Let's lock this in:
-    Click the link below to enroll for your trial + webinar access:
-
-    👉 [Enrollment Link](https://votage-page.vercel.app)
-
-    Seats are filling up fast — only a few left!
-
-    This won't take long.
-    Once you fill the form, my team gets everything they need to plug you in properly.
-
-    After registering through the link above, send a quick message to my team:
-    @bullpilotofficial — just say "I've filled the form"
-
-    You can also reach me directly here:
-    @blisswrld10
-        """
-        
-        keyboard4 = [
-            [InlineKeyboardButton("📝 Enrollment Link", url="https://votage-page.vercel.app")],
-            [InlineKeyboardButton("📩 Contact Support", url="https://t.me/bullpilotofficial")],
-            [InlineKeyboardButton("💬 Direct Contact", url="https://t.me/blisswrld10")]
-        ]
-        reply_markup4 = InlineKeyboardMarkup(keyboard4)
-        
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=final_message,
-            parse_mode='Markdown',
-            reply_markup=reply_markup4
-        )
-
+        await update.message.reply_text(admin_text, parse_mode='Markdown', reply_markup=reply_markup)
 
     def _is_admin(self, user_id: int) -> bool:
         """Check if user is admin - you can customize this"""
@@ -856,7 +766,7 @@ Use these commands to manage your reminders:
         
         # Add handlers
         app.add_handler(CommandHandler("start", self.start_command))
-        # app.add_handler(CommandHandler("admin", self.admin_command))  # New admin command
+        app.add_handler(CommandHandler("admin", self.admin_command))  # New admin command
         app.add_handler(CommandHandler("addresponse", self.add_response_command))
         app.add_handler(CommandHandler("addresponse_exact", self.add_exact_response_command))
         app.add_handler(CommandHandler("listresponses", self.list_responses_command))
