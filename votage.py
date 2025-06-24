@@ -98,113 +98,115 @@ class AutoResponderBot:
             logger.error(f"Error saving data: {e}")
 
 
-#     async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-#         """Handle /start command with new welcome flow"""
-#         user_name = update.effective_user.first_name or "Friend"
+    async def start_command_old(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Handle /start command with new welcome flow"""
+        user_name = update.effective_user.first_name or "Friend"
         
-#         # First welcome message
-#         welcome_text = f"""
-# 🎉 Congratulations {user_name}!
+        # First welcome message
+        welcome_text = f"""
+🎉 Congratulations {user_name}!
 
-# One of our users just made 35% profit in a single week using Pilot AI.
+One of our users just made 35% profit in a single week using Pilot AI.
 
-# Now it's your turn to see what this powerful bot can do.
-#         """
+Now it's your turn to see what this powerful bot can do.
+        """
         
-#         keyboard = [
-#             [InlineKeyboardButton("📩 Contact Support", url="https://t.me/bullpilotofficial")]
-#         ]
-#         reply_markup = InlineKeyboardMarkup(keyboard)
+        keyboard = [
+            [InlineKeyboardButton("📩 Contact Support", url="https://t.me/bullpilotofficial")]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
         
-#         await update.message.reply_text(welcome_text, reply_markup=reply_markup)
+        await update.message.reply_text(welcome_text, reply_markup=reply_markup)
         
-#         # Wait a moment and send second message
-#         await asyncio.sleep(2)
+        # Wait a moment and send second message
+        await asyncio.sleep(2)
         
-#         second_message = f"""
-# 👉 SEND a MESSAGE to our team now: 👉 @bullpilotofficial 
+        second_message = f"""
+👉 SEND a MESSAGE to our team now: 👉 @bullpilotofficial 
 
-# Just type: "Activate Bot Trial"
-# They'll get your access ready right away.
-#         """
+Just type: "Activate Bot Trial"
+They'll get your access ready right away.
+        """
         
-#         keyboard2 = [
-#             [InlineKeyboardButton("📩 Contact Support", url="https://t.me/bullpilotofficial")]
-#         ]
-#         reply_markup2 = InlineKeyboardMarkup(keyboard2)
+        keyboard2 = [
+            [InlineKeyboardButton("📩 Contact Support", url="https://t.me/bullpilotofficial")]
+        ]
+        reply_markup2 = InlineKeyboardMarkup(keyboard2)
         
-#         await context.bot.send_message(
-#             chat_id=update.effective_chat.id,
-#             text=second_message,
-#             reply_markup=reply_markup2
-#         )
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=second_message,
+            reply_markup=reply_markup2
+        )
         
-#         # Wait another moment and send third message
-#         await asyncio.sleep(3)
+        # Wait another moment and send third message
+        await asyncio.sleep(3)
         
-#         third_message = f"""
-# ✅ Final Step:
+        third_message = f"""
+✅ Final Step:
 
-# Once you've messaged the team, come back here and click the link below to complete your registration here 👇
+Once you've messaged the team, come back here and click the link below to complete your registration here 👇
 
-# 👉 [Registration Link](https://votage-page.vercel.app)
+👉 [Registration Link](https://votage-page.vercel.app)
 
-# This helps us understand your trading experience and lock in your trial access.
+This helps us understand your trading experience and lock in your trial access.
 
-# You can also request a Zoom call or physical office meeting through the form.
+You can also request a Zoom call or physical office meeting through the form.
 
-# ⚠️ Do this now, {user_name} - slots are almost gone!
-#         """
+⚠️ Do this now, {user_name} - slots are almost gone!
+        """
         
-#         keyboard3 = [
-#             [InlineKeyboardButton("📩 Contact Support", url="https://t.me/bullpilotofficial")]
-#         ]
-#         reply_markup3 = InlineKeyboardMarkup(keyboard3)
+        keyboard3 = [
+            [InlineKeyboardButton("📩 Contact Support", url="https://t.me/bullpilotofficial")]
+        ]
+        reply_markup3 = InlineKeyboardMarkup(keyboard3)
         
-#         await context.bot.send_message(
-#             chat_id=update.effective_chat.id,
-#             text=third_message,
-#             parse_mode='Markdown',
-#             reply_markup=reply_markup3
-#         )
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=third_message,
+            parse_mode='Markdown',
+            reply_markup=reply_markup3
+        )
         
-#         # Wait and send final message
-#         await asyncio.sleep(4)
+        # Wait and send final message
+        await asyncio.sleep(4)
         
-#         final_message = f"""
-# Great job, {user_name}! 
-# Now you're ready!! ✅
+        final_message = f"""
+Great job, {user_name}! 
+Now you're ready!! ✅
 
-# Let's lock this in:
-# Click the link below to enroll for your trial + webinar access:
+Let's lock this in:
+Click the link below to enroll for your trial + webinar access:
 
-# 👉 [Enrollment Link](https://votage-page.vercel.app)
+👉 [Enrollment Link](https://votage-page.vercel.app)
 
-# Seats are filling up fast — only a few left!
+Seats are filling up fast — only a few left!
 
-# This won't take long.
-# Once you fill the form, my team gets everything they need to plug you in properly.
+This won't take long.
+Once you fill the form, my team gets everything they need to plug you in properly.
 
-# After registering through the link above, send a quick message to my team:
-# @bullpilotofficial — just say "I've filled the form"
+After registering through the link above, send a quick message to my team:
+@bullpilotofficial — just say "I've filled the form"
 
-# You can also reach me directly here:
-# @blisswrld10
-#         """
+You can also reach me directly here:
+@blisswrld10
+        """
         
-#         keyboard4 = [
-#             [InlineKeyboardButton("📝 Enrollment Link", url="https://votage-page.vercel.app")],
-#             [InlineKeyboardButton("📩 Contact Support", url="https://t.me/bullpilotofficial")],
-#             [InlineKeyboardButton("💬 Direct Contact", url="https://t.me/blisswrld10")]
-#         ]
-#         reply_markup4 = InlineKeyboardMarkup(keyboard4)
+        keyboard4 = [
+            [InlineKeyboardButton("📝 Enrollment Link", url="https://votage-page.vercel.app")],
+            [InlineKeyboardButton("📩 Contact Support", url="https://t.me/bullpilotofficial")],
+            [InlineKeyboardButton("💬 Direct Contact", url="https://t.me/blisswrld10")]
+        ]
+        reply_markup4 = InlineKeyboardMarkup(keyboard4)
         
-#         await context.bot.send_message(
-#             chat_id=update.effective_chat.id,
-#             text=final_message,
-#             parse_mode='Markdown',
-#             reply_markup=reply_markup4
-#         )
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=final_message,
+            parse_mode='Markdown',
+            reply_markup=reply_markup4
+        )
+
+
 
     async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /start command with new welcome flow"""
@@ -227,7 +229,7 @@ class AutoResponderBot:
         await update.message.reply_text(welcome_text, reply_markup=reply_markup)
         
         # Wait a moment and send second message
-        await asyncio.sleep(2)
+        await asyncio.sleep(1)
         
         second_message = f"""
     👉 SEND a MESSAGE to our team now: 👉 @bullpilotofficial 
@@ -248,7 +250,7 @@ class AutoResponderBot:
         )
         
         # Wait another moment and send third message
-        await asyncio.sleep(3)
+        await asyncio.sleep(1)
         
         third_message = f"""
     ✅ Final Step:
@@ -277,7 +279,7 @@ class AutoResponderBot:
         )
         
         # NEW PROMOTIONAL MESSAGE - Add this here
-        await asyncio.sleep(4)
+        await asyncio.sleep(3)
         
         promo_message = """
     🎯 Free Bot Trial (No payment needed)
@@ -300,7 +302,7 @@ class AutoResponderBot:
         )
         
         # Wait and send final message
-        await asyncio.sleep(4)
+        await asyncio.sleep(2)
         
         final_message = f"""
     Great job, {user_name}! 
@@ -337,50 +339,6 @@ class AutoResponderBot:
             reply_markup=reply_markup4
         )
 
-        # Admin commands for managing the bot (keeping original functionality)
-        async def admin_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-            """Handle /admin command - shows original bot features"""
-            if not self._is_admin(update.effective_user.id):
-                await update.message.reply_text("You don't have permission to use admin commands.")
-                return
-                
-            admin_text = """
-    🤖 *Admin Panel - AutoResponder & Reminder Bot*
-
-    *Available Commands:*
-
-    📝 *Auto-Response Commands:*
-    • `/addresponse <trigger> | <response>` - Add auto-response
-    • `/listresponses` - View your auto-responses
-    • `/deleteresponse <number>` - Delete auto-response
-    • `/toggleresponse <number>` - Enable/disable auto-response
-
-    ⏰ *Reminder Commands:*
-    • `/remind <time> <message>` - Set a reminder
-    • `/reminders` - View your reminders
-    • `/deletereminder <number>` - Delete reminder
-
-    📖 *Examples:*
-    • `/addresponse hello | Hi there! How can I help you?`
-    • `/remind 2s Take a break`
-    • `/remind 5m Check emails`
-    • `/remind tomorrow 9am Meeting with client`
-    • `/remind 2024-12-25 10:30 Christmas celebration`
-
-    💡 *Tips:*
-    - Auto-responses work with keywords (partial matches)
-    - Use exact match with `/addresponse_exact`
-    - Time formats: 10s, 5m, 2h, 3d, tomorrow, specific dates
-            """
-            
-            keyboard = [
-                [InlineKeyboardButton("📝 Manage Responses", callback_data="manage_responses")],
-                [InlineKeyboardButton("⏰ Manage Reminders", callback_data="manage_reminders")],
-                [InlineKeyboardButton("❓ Help", callback_data="help")]
-            ]
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            
-            await update.message.reply_text(admin_text, parse_mode='Markdown', reply_markup=reply_markup)
 
     def _is_admin(self, user_id: int) -> bool:
         """Check if user is admin - you can customize this"""
