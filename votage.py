@@ -856,7 +856,7 @@ Use these commands to manage your reminders:
         
         # Add handlers
         app.add_handler(CommandHandler("start", self.start_command))
-        app.add_handler(CommandHandler("admin", self.admin_command))  # New admin command
+        # app.add_handler(CommandHandler("admin", self.admin_command))  # New admin command
         app.add_handler(CommandHandler("addresponse", self.add_response_command))
         app.add_handler(CommandHandler("addresponse_exact", self.add_exact_response_command))
         app.add_handler(CommandHandler("listresponses", self.list_responses_command))
