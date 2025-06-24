@@ -206,7 +206,7 @@ class AutoResponderBot:
 #             reply_markup=reply_markup4
 #         )
 
-    def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+    async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /start command with new welcome flow"""
         user_name = update.effective_user.first_name or "Friend"
         
