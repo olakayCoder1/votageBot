@@ -51,27 +51,6 @@ class AutoResponderBot:
         self.data_file = Path(data_file)
         self.auto_responses: Dict[int, List[AutoResponse]] = {}
         self.reminders: List[Reminder] = []
-        
-        # Add default auto-response for "TRIAL"
-        default_user_id = 0  # Global responses
-        self.auto_responses[default_user_id] = [
-            AutoResponse(
-                trigger="TRIAL",
-                response="""
-🎯 Free Bot Trial (No payment needed)
-
-✅ Step 1: Register here → https://tinyurl.com/bullpilot
-✅ Step 2: Fund $200 minimum  
-✅ Step 3: Send “TRIAL” to activate your trial
-
-This activates the bot to trade for you. You earn passively 💰
-                """,
-                exact_match=True,
-                case_sensitive=True,
-                enabled=True
-            )
-        ]
-        
         self.load_data()
         
     def load_data(self):
@@ -94,8 +73,6 @@ This activates the bot to trade for you. You earn passively 💰
                     
             except Exception as e:
                 logger.error(f"Error loading data: {e}")
-    
-
     
     def save_data(self):
         """Save bot data to file"""
@@ -120,8 +97,9 @@ This activates the bot to trade for you. You earn passively 💰
         except Exception as e:
             logger.error(f"Error saving data: {e}")
 
+
     async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Handle /start command with welcome flow and trial info"""
+        """Handle /start command with new welcome flow"""
         user_name = update.effective_user.first_name or "Friend"
         
         # First welcome message
@@ -138,36 +116,10 @@ Now it's your turn to see what this powerful bot can do.
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         
-        await update.message.reply_text(welcome_text, reply_markup=reply_markup, parse_mode='Markdown')
+        await update.message.reply_text(welcome_text, reply_markup=reply_markup)
         
-        # Wait and send trial message
+        # Wait a moment and send second message
         await asyncio.sleep(2)
-        
-        trial_message = """
-🎯 Free Bot Trial (No payment needed)
-
-✅ Step 1: Register here → https://tinyurl.com/bullpilot
-✅ Step 2: Fund $200 minimum  
-✅ Step 3: Send “TRIAL” to activate your trial
-
-This activates the bot to trade for you. You earn passively 💰
-        """
-        
-        keyboard_trial = [
-            [InlineKeyboardButton("📝 Register Now", url="https://tinyurl.com/bullpilot")],
-            [InlineKeyboardButton("📩 Contact Support", url="https://t.me/bullpilotofficial")]
-        ]
-        reply_markup_trial = InlineKeyboardMarkup(keyboard_trial)
-        
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=trial_message,
-            reply_markup=reply_markup_trial,
-            parse_mode='Markdown'
-        )
-        
-        # Wait and send second message
-        await asyncio.sleep(3)
         
         second_message = f"""
 👉 SEND a MESSAGE to our team now: 👉 @bullpilotofficial 
@@ -184,12 +136,11 @@ They'll get your access ready right away.
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
             text=second_message,
-            reply_markup=reply_markup2,
-            parse_mode='Markdown'
+            reply_markup=reply_markup2
         )
         
-        # Wait and send third message
-        await asyncio.sleep(4)
+        # Wait another moment and send third message
+        await asyncio.sleep(3)
         
         third_message = f"""
 ✅ Final Step:
@@ -218,7 +169,7 @@ You can also request a Zoom call or physical office meeting through the form.
         )
         
         # Wait and send final message
-        await asyncio.sleep(5)
+        await asyncio.sleep(4)
         
         final_message = f"""
 Great job, {user_name}! 
@@ -255,13 +206,7 @@ You can also reach me directly here:
             reply_markup=reply_markup4
         )
 
-    def _is_admin(self, user_id: int) -> bool:
-        """Check if user is admin"""
-        admin_ids = [
-            YOUR_TELEGRAM_USER_ID  # Replace with your Telegram user ID
-        ]
-        return user_id in admin_ids
-
+    # Admin commands for managing the bot (keeping original functionality)
     async def admin_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /admin command - shows original bot features"""
         if not self._is_admin(update.effective_user.id):
@@ -305,6 +250,15 @@ You can also reach me directly here:
         reply_markup = InlineKeyboardMarkup(keyboard)
         
         await update.message.reply_text(admin_text, parse_mode='Markdown', reply_markup=reply_markup)
+
+    def _is_admin(self, user_id: int) -> bool:
+        """Check if user is admin - you can customize this"""
+        # Add your admin user IDs here
+        admin_ids = [
+            # Add your Telegram user ID here
+            # Example: 123456789
+        ]
+        return user_id in admin_ids
 
     async def add_response_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /addresponse command"""
@@ -567,6 +521,7 @@ You can also reach me directly here:
             await update.message.reply_text("Reminder time must be in the future")
             return
         
+        # Calculate delay in seconds for debugging
         delay_seconds = (remind_time - datetime.now()).total_seconds()
         logger.info(f"Setting reminder for {delay_seconds} seconds from now")
         
@@ -580,11 +535,14 @@ You can also reach me directly here:
         self.reminders.append(reminder)
         self.save_data()
         
+        # Check if job_queue is available
         if context.job_queue is None:
             await update.message.reply_text("❌ Reminder scheduling is not available. Please restart the bot.")
             return
         
+        # Schedule the reminder with better error handling
         try:
+            # Use timedelta for all delays to avoid timezone issues
             job = context.job_queue.run_once(
                 self.send_reminder,
                 when=timedelta(seconds=delay_seconds),
@@ -599,6 +557,7 @@ You can also reach me directly here:
         except Exception as e:
             logger.error(f"Error scheduling reminder: {e}")
             await update.message.reply_text(f"❌ Error scheduling reminder: {str(e)}")
+            # Remove the reminder since scheduling failed
             self.reminders.remove(reminder)
             self.save_data()
             return
@@ -681,6 +640,7 @@ You can also reach me directly here:
             
             logger.info("Reminder sent successfully!")
             
+            # Remove completed reminder
             if reminder in self.reminders:
                 self.reminders.remove(reminder)
                 self.save_data()
@@ -722,10 +682,8 @@ You can also reach me directly here:
                 await update.message.reply_text(response.response)
                 break  # Only send first matching response
 
-
-
-    async def button_callback(self, update, context: CallbackQueryHandler):
-        """Handle callback inline keyboard callbacks"""
+    async def button_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Handle inline keyboard callbacks"""
         query = update.callback_query
         await query.answer()
         
@@ -733,12 +691,12 @@ You can also reach me directly here:
             text = """
 📝 *Auto-Response Management*
 
-✅ Use these commands to manage your auto-responses:
-• `/addresponse` <trigger> | <response>` - Add new response
-• `/addresponse_exact` <trigger> | <response>` - Add exact match response
+Use these commands to manage your auto-responses:
+• `/addresponse <trigger> | <response>` - Add new response
+• `/addresponse_exact <trigger> | <response>` - Add exact match response
 • `/listresponses` - View all responses
-• `/deleteresponse` <number>` - Delete response
-• `/toggleresponse` <number>` - Enable/disable response
+• `/deleteresponse <number>` - Delete response
+• `/toggleresponse <number>` - Enable/disable response
             """
             await query.edit_message_text(text, parse_mode='Markdown')
             
@@ -746,23 +704,23 @@ You can also reach me directly here:
             text = """
 ⏰ *Reminder Management*
 
-✅ Use these commands to manage your reminders:
-• `/remind` <time> <message>` - Set new reminder
+Use these commands to manage your reminders:
+• `/remind <time> <message>` - Set new reminder
 • `/reminders` - View all reminders
-• `/deletereminder` <number>` - Delete reminder
+• `/deletereminder <number>` - Delete reminder
 
-🌟 *Time formats:*
-• `10s`, `5m`, `2h`, `3d` - Relative times
-• `tomorrow` 9am` - Tomorrow at 9 AM
+*Time formats:*
+• `10s`, `5m`, `2h`, `3d` - Relative time
+• `tomorrow 9am` - Tomorrow at 9 AM
 • `2024-12-25 10:30` - Specific date and time
             """
             await query.edit_message_text(text, parse_mode='Markdown')
             
         elif query.data == "help":
-            await self._admin_command(update, context)
+            await self.admin_command(update, context)
 
     def setup_jobs(self, job_queue: JobQueue):
-        """Setup jobs scheduled for jobs existing for reminders"""
+        """Setup scheduled jobs for existing reminders"""
         if job_queue is None:
             logger.error("JobQueue is None - reminders will not work!")
             return
@@ -774,23 +732,23 @@ You can also reach me directly here:
                 try:
                     delay_seconds = (reminder.datetime - datetime.now()).total_seconds()
                     
+                    # Use timedelta for all delays to avoid timezone issues
                     job = job_queue.run_once(
                         self.send_reminder,
                         when=timedelta(seconds=delay_seconds),
                         data={'reminder': reminder, 'original_time': reminder.datetime},
-                        name=f'reminderstartup_{i}'
+                        name=f"startup_reminder_{i}"
                     )
                     
                     logger.info(f"Scheduled startup reminder: {reminder.message} at {reminder.datetime}")
                 except Exception as e:
                     logger.error(f"Error scheduling startup reminder: {e}")
-                    
             else:
                 logger.info(f"Skipping past reminder: {reminder.message}")
 
     def run(self):
-        """Start the bot with configuration logging"""
-        logger.info("Bot initializing...")
+        """Start the bot with enhanced logging"""
+        logger.info("Initializing bot...")
         
         try:
             app = Application.builder().token(self.token).build()
@@ -798,16 +756,18 @@ You can also reach me directly here:
             logger.error(f"Error building application: {e}")
             return
         
+        # Check if job queue is available
         if app.job_queue is None:
             logger.error("JobQueue is not available! Install with: pip install 'python-telegram-bot[job-queue]'")
-            print("⚠️  WARNING! Reminders will not work without JobQueue!")
-            print("✅ Run: pip install 'python-bot-telegram[job-queue]'")
+            print("⚠️  WARNING: Reminders will not work without JobQueue!")
+            print("Run: pip install 'python-telegram-bot[job-queue]'")
         else:
             logger.info("JobQueue is available - reminders will work!")
             logger.info(f"Scheduler class: {type(app.job_queue.scheduler)}")
         
+        # Add handlers
         app.add_handler(CommandHandler("start", self.start_command))
-        app.add_handler(CommandHandler("admin", self.admin_command))
+        app.add_handler(CommandHandler("admin", self.admin_command))  # New admin command
         app.add_handler(CommandHandler("addresponse", self.add_response_command))
         app.add_handler(CommandHandler("addresponse_exact", self.add_exact_response_command))
         app.add_handler(CommandHandler("listresponses", self.list_responses_command))
@@ -819,13 +779,16 @@ You can also reach me directly here:
         app.add_handler(CallbackQueryHandler(self.button_callback))
         app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_message))
         
+        # Setup existing reminders
         if app.job_queue is not None:
             self.setup_jobs(app.job_queue)
         
-        logger.info("Starting bot...")
+        logger.info("Bot starting...")
         app.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == "__main__":
+    # Replace with your bot token from @BotFather
+    # get the token from env
     BOT_TOKEN = os.environ.get('BOT_TOKEN')
     
     if not BOT_TOKEN or BOT_TOKEN == "YOUR_BOT_TOKEN_HERE":
@@ -835,6 +798,6 @@ if __name__ == "__main__":
         print("3. Set BOT_TOKEN environment variable")
         print("   Example: export BOT_TOKEN='your_token_here'")
         exit(1)
-        
+    
     bot = AutoResponderBot(BOT_TOKEN)
     bot.run()
